@@ -83,8 +83,23 @@ st.set_page_config(
     layout="wide",
 )
 
+st.markdown("""
+## Flashcard Generator with GPT
+
+Welcome to the Flashcard Generator! This tool is designed to help you extract and create flashcards from any document or text you provide. Here's how to use it:
+
+1. **Paste Your Document**: In the textbox provided, paste the content from which you'd like to generate flashcards. The current limit is 5000 characters.
+2. **Generate Flashcards**: After pasting your text, click on the "Generate Flashcards" button. The app will analyze your content and suggest potential flashcards based on the main concepts, definitions, and other important information.
+3. **Review & Edit**: The generated flashcards will be displayed below. Review them and make any necessary edits to ensure they fit your needs.
+4. **Feedback is Gold**: Your feedback is invaluable to us. By providing feedback, you help us improve and keep this app running. So, if you find this tool helpful or have suggestions for improvement, please let us know!
+
+Thank you for using the Flashcard Generator. Happy studying!
+""")
+            
+
+
 # Textbox for users to input their document content with a character limit
-user_text = st.text_area("Paste your document content here:", max_chars=5000)
+user_text = st.text_area("Paste your document content here:", max_chars=7000)
 
 # Button to trigger the GPT analysis
 if st.button("Generate Flashcards"):
@@ -96,3 +111,29 @@ if st.button("Generate Flashcards"):
     prompt_with_email = prompt.format(user_text=user_text)
     response = llm(prompt_with_email)
     st.write(response)
+
+# Trubrics Feedback Collector
+collector = FeedbackCollector(
+    project="flashcards",
+    email=os.environ.get("TRUBRICS_EMAIL"),
+    password=os.environ.get("TRUBRICS_PASSWORD"),
+)
+
+collector.st_feedback(
+    component="rating",
+    feedback_type="faces",
+    model="gpt-3.5-turbo",
+    prompt_id=None,  # see prompts to log prompts and model generations
+    open_feedback_label='[Optional] Provide additional feedback'
+)
+
+
+# Display the text description
+st.write("If you like my work, consider supporting me:")
+
+# Embed the custom "Buy Me A Coffee" button
+st.markdown("""
+    <a href="https://www.buymeacoffee.com/sherlockanddan" target="_blank">
+        <img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;">
+    </a>
+""", unsafe_allow_html=True)
